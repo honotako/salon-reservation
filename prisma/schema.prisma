@@ -11,3 +11,108 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+//以下にテーブル情報を記載する
+enum ReservationSource {
+  web
+  phone
+  line
+  instagram
+  other
+}
+
+enum ReservationStatus {
+  reserved
+  visited
+  canceled
+  no_show
+}
+
+enum HolidayType {
+  weekly
+  temporary
+}
+
+model Customer {
+  id           Int           @id @default(autoincrement())
+  name         String
+  email        String?
+  phone        String?
+  passwordHash String?       @map("password_hash")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  reservations Reservation[]
+
+  @@map("customers")
+}
+
+model Stylist {
+  id           Int           @id @default(autoincrement())
+  name         String
+  email        String        @unique
+  passwordHash String        @map("password_hash")
+  profile      String?
+  isDeleted    Boolean       @default(false) @map("is_deleted")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  reservations Reservation[]
+
+  @@map("stylists")
+}
+
+model Menu {
+  id              Int           @id @default(autoincrement())
+  name            String
+  price           Int
+  description     String?
+  durationMinutes Int           @map("duration_minutes")
+  isDeleted       Boolean       @default(false) @map("is_deleted")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+  reservations    Reservation[]
+
+  @@map("menus")
+}
+
+model Reservation {
+  id         Int               @id @default(autoincrement())
+  customerId Int               @map("customer_id")
+  stylistId  Int               @map("stylist_id")
+  menuId     Int               @map("menu_id")
+  startAt    DateTime          @map("start_at")
+  endAt      DateTime          @map("end_at")
+  source     ReservationSource
+  status     ReservationStatus @default(reserved)
+  createdAt  DateTime          @default(now()) @map("created_at")
+  updatedAt  DateTime          @updatedAt @map("updated_at")
+
+  customer Customer @relation(fields: [customerId], references: [id])
+  stylist  Stylist  @relation(fields: [stylistId], references: [id])
+  menu     Menu     @relation(fields: [menuId], references: [id])
+
+  @@index([stylistId, startAt])
+  @@map("reservations")
+}
+
+model StoreSetting {
+  id          Int      @id @default(autoincrement())
+  openTime    DateTime @map("open_time") @db.Time(0)
+  closeTime   DateTime @map("close_time") @db.Time(0)
+  slotMinutes Int      @map("slot_minutes")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("store_settings")
+}
+
+model Holiday {
+  id        Int         @id @default(autoincrement())
+  type      HolidayType
+  weekday   Int?
+  date      DateTime?   @db.Date
+  reason    String?
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
+
+  @@map("holidays")
+}
