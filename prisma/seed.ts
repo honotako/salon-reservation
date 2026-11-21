@@ -1,44 +1,37 @@
 import "dotenv/config";
-import bcrypt from "bcryptjs";
-import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "../src/generated/prisma/client";
-
-const adapter = new PrismaPg(process.env.DATABASE_URL!);
-const prisma = new PrismaClient({ adapter });
+import { auth } from "../src/lib/auth";
+import { prisma } from "../src/lib/prisma";
 
 async function main() {
 
     await prisma.reservation.deleteMany();
     await prisma.customer.deleteMany();
     await prisma.stylist.deleteMany();
+    await prisma.session.deleteMany();
+    await prisma.account.deleteMany();
+    await prisma.user.deleteMany();
     await prisma.menu.deleteMany();
     await prisma.holiday.deleteMany();
     await prisma.storeSetting.deleteMany();
+    
 
     // 美容師（ログイン用のパスワードは開発用に全員同じ）
-    const passwordHash = await bcrypt.hash("password123", 10);
-    await prisma.stylist.createMany({
-        data: [
-            {
-                name: "田中敦子",
-                email: "tanaka@example.com",
-                passwordHash,
-                profile: "主に女性のショートカットが得意です",
-            },
-            {
-                name: "佐藤みか",
-                email: "sato@example.com",
-                passwordHash,
-                profile: "男性のパーマとレザーカットが得意です",
-            },
-            {
-                name: "安田雄太",
-                email: "yasuda@example.com",
-                passwordHash,
-                profile: "女性のロングとパーマ、縮毛矯正が得意です",
-            },
-        ],
-    });
+    const stylists = [
+        { name: "田中敦子", email: "tanaka@example.com", profile: "主に女性のショートカットが得意です" },
+        { name: "佐藤みか", email: "sato@example.com", profile: "男性のパーマとレザーカットが得意です" },
+        { name: "安田雄太", email: "yasuda@example.com", profile: "女性のロングとパーマ、縮毛矯正が得意です" },
+    ];
+
+    for (const s of stylists) {
+        // Better Auth でログイン用のユーザーを作る（パスワードは自動でハッシュ化される）
+        const { user } = await auth.api.signUpEmail({
+        body: { name: s.name, email: s.email, password: "password123" },
+        });
+        // 作ったユーザーと紐づけて美容師を作る
+        await prisma.stylist.create({
+        data: { userId: user.id, name: s.name, profile: s.profile },
+        });
+    }
 
     // メニュー
     await prisma.menu.createMany({
