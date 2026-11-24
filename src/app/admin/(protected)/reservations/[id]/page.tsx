@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { statusLabel, sourceLabel, formatTime, formatDate } from "@/lib/format";
+import StatusButtons from "@/components/admin/StatusButtons";
 
 export const instant = false;
 
@@ -42,6 +43,7 @@ export default async function ReservationDetailPage({
       <p>担当者：{reservation.stylist.name}</p>
       <p>予約経路：{sourceLabel[reservation.source]}</p>
       <p>状態：{statusLabel[reservation.status]}</p>
+      <StatusButtons reservationId={reservation.id} status={reservation.status} />
       <p>コメント：{reservation.note ?? "なし"}</p>
       <h2>お客様情報</h2>
       <p>氏名：{reservation.customer.name}</p>
