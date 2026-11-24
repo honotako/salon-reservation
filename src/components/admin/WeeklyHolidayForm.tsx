@@ -52,34 +52,27 @@ export default function WeeklyHolidayForm({
 
     //画面
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <label className="form-field max-w-xs">
+            定休日
             <select
-                value={weekday === null ? "none" : String(weekday)}
-                onChange={(e) => setWeekday(e.target.value === "none" ? null : Number(e.target.value))}
+              value={weekday === null ? "none" : String(weekday)}
+              onChange={(e) => setWeekday(e.target.value === "none" ? null : Number(e.target.value))}
             >
-            <option value="none">定休日なし</option>
-            {weekdayLabels.map((label, index) => (
+              <option value="none">定休日なし</option>
+              {weekdayLabels.map((label, index) => (
                 <option key={index} value={index}>{label}曜日</option>
-            ))}
+              ))}
             </select>
+          </label>
     
-          {/* エラーメッセージ（あるときだけ） */}
-          {errorMessage && <p>{errorMessage}</p>}
-          {/* 警告メッセージ（あるときだけ） */}
-          {warningMessage && <p>{warningMessage}</p>}
-          {/* 成功メッセージ（あるときだけ） */}
-          {successMessage && <p>{successMessage}</p>}
+          {errorMessage && <p className="message-error">{errorMessage}</p>}
+          {warningMessage && <p className="message-warning">{warningMessage}</p>}
+          {successMessage && <p className="message-success">{successMessage}</p>}
     
-          {/* 保存ボタン（保存中は押せない） */}
-          <button type="submit" disabled={isSaving}>保存</button>
+          <div>
+            <button type="submit" disabled={isSaving} className="btn-primary">保存</button>
+          </div>
         </form>
-      );
-
-    
-
-
-
-
-
-
+    );
 }

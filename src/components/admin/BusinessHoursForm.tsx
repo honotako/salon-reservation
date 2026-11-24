@@ -60,8 +60,9 @@ export default function BusinessHoursForm({
 
     //画面
     return (
-        <form onSubmit={handleSubmit}>
-          <label>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <div className="flex flex-wrap gap-4">
+          <label className="form-field">
             開始
             <select value={openTime} onChange={(e) => setOpenTime(e.target.value)}>
               {timeOptions.map((time) => (
@@ -69,9 +70,7 @@ export default function BusinessHoursForm({
               ))}
             </select>
           </label>
-    
-          {/* 終了時間の選択肢（開始とほぼ同じ） */}
-          <label>
+          <label className="form-field">
             終了
             <select value={closeTime} onChange={(e) => setCloseTime(e.target.value)}>
               {timeOptions.map((time) => (
@@ -79,32 +78,22 @@ export default function BusinessHoursForm({
               ))}
             </select>
           </label>
-    
-          {/* 刻みの選択肢（slotOptions を map で並べる。表示は「15分」のように） */}
-          <label>
+          <label className="form-field">
             予約の刻み
             <select value={slotMinutes} onChange={(e) => setSlotMinutes(Number(e.target.value))}>
-                {slotOptions.map((minutes) => (
+              {slotOptions.map((minutes) => (
                 <option key={minutes} value={minutes}>{minutes}分</option>
-                ))}
+              ))}
             </select>
           </label>
-    
-          {/* エラーメッセージ（あるときだけ） */}
-          {errorMessage && <p>{errorMessage}</p>}
-          {/* 成功メッセージ（あるときだけ） */}
-          {successMessage && <p>{successMessage}</p>}
-    
-          {/* 保存ボタン（保存中は押せない） */}
-          <button type="submit" disabled={isSaving}>保存</button>
-        </form>
-      );
-
-    
-
-
-
-
-
-
+        </div>
+  
+        {errorMessage && <p className="message-error">{errorMessage}</p>}
+        {successMessage && <p className="message-success">{successMessage}</p>}
+  
+        <div>
+          <button type="submit" disabled={isSaving} className="btn-primary">保存</button>
+        </div>
+      </form>
+    );
 }

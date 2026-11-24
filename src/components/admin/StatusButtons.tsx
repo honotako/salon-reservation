@@ -43,24 +43,21 @@ export default function StatusButtons({
     };
 
     return (
-        <div>
-          <button type="button" onClick={() => handleChange("visited")} disabled={isUpdating}>
-            来店済みにする
-          </button>
-          <button type="button" onClick={() => handleChange("canceled")} disabled={isUpdating}>
-            キャンセルにする
-          </button>
-          <button type="button" onClick={() => handleChange("no_show")} disabled={isUpdating}>
-            無断キャンセルにする
-          </button>
-    
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-wrap gap-2">
+            <button type="button" onClick={() => handleChange("visited")} disabled={isUpdating} className="btn-primary">
+              来店済みにする
+            </button>
+            <button type="button" onClick={() => handleChange("canceled")} disabled={isUpdating} className="btn-secondary">
+              キャンセルにする
+            </button>
+            <button type="button" onClick={() => handleChange("no_show")} disabled={isUpdating} className="btn-secondary">
+              無断キャンセルにする
+            </button>
+          </div>
           {/* エラーメッセージ（エラーがあるときだけ表示） */}
-          {errorMessage && <p>{errorMessage}</p>}
+          {errorMessage && <p className="message-error">{errorMessage}</p>}
         </div>
     );
-
-
-
-
 }   
 
