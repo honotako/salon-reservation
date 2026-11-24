@@ -22,7 +22,7 @@ export async function updateReservationStatus(reservationId: number, newStatus: 
 
   // ③「今の状態が予約済み」の予約だけを変更する
   const result = await prisma.reservation.updateMany({
-    where: { id: reservationId, status: "reserved" },
+    where: { id: reservationId, status: "reserved" , isDeleted : false},
     data: { status: newStatus },
   });
 
@@ -32,4 +32,26 @@ export async function updateReservationStatus(reservationId: number, newStatus: 
   }
 
   return { error: null };
+}
+
+export async function deleteReservation(reservationId: number) {
+  // ① ログインしているか確かめる
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) {
+    return { error: "ログインしてください" };
+  }
+
+  //②「予約済み」で「まだ削除されていない」予約に、削除済みの印を付ける（論理削除）
+  const result = await prisma.reservation.updateMany({
+    where : { id : reservationId,  status: "reserved" , isDeleted : false},
+    data : { isDeleted : true }
+  });
+
+  // ③ 1件も削除されなかったらエラーを返す
+  if (result.count === 0) {
+    return { error: "この予約はもう削除できません" };
+  }
+
+  // ④ 成功
+  return { error : null};
 }

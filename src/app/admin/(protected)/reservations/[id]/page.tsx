@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { statusLabel, sourceLabel, formatTime, formatDate } from "@/lib/format";
 import StatusButtons from "@/components/admin/StatusButtons";
+import DeleteButton from "@/components/admin/DeleteButton";
 
 export const instant = false;
 
@@ -21,8 +22,8 @@ export default async function ReservationDetailPage({
   }
 
   // 予約を1件取ってくる
-  const reservation = await prisma.reservation.findUnique({
-    where: { id: reservationId },
+  const reservation = await prisma.reservation.findFirst({
+    where: { id: reservationId , isDeleted : false },
     include: { customer: true, stylist: true, menu: true },
   });
 
@@ -44,6 +45,7 @@ export default async function ReservationDetailPage({
       <p>予約経路：{sourceLabel[reservation.source]}</p>
       <p>状態：{statusLabel[reservation.status]}</p>
       <StatusButtons reservationId={reservation.id} status={reservation.status} />
+      <DeleteButton reservationId={reservation.id} status={reservation.status} />
       <p>コメント：{reservation.note ?? "なし"}</p>
       <h2>お客様情報</h2>
       <p>氏名：{reservation.customer.name}</p>

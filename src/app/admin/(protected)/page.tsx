@@ -17,6 +17,7 @@ export default async function AdminHomePage() {
     const reservations = await prisma.reservation.findMany({
         where : {
             startAt : { gte : startOfToday, lt : startOfTomorrow },
+            isDeleted : false,
         },
         include : {
             customer : true,

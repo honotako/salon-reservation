@@ -12,7 +12,12 @@ const holidayColor = "#e5e7eb";
 
 export default async function ReservationsPage() {
     // ① 予約を全部取ってくる（お客さんの名前を使うので customer を include）
-    const reservations = await prisma.reservation.findMany({include : {customer : true }});
+    const reservations = await prisma.reservation.findMany({
+      where : {
+        isDeleted : false,
+      },
+      include : {customer : true }
+    });
 
   // ② 美容師を id の順に取ってくる
   const stylists = await prisma.stylist.findMany({ orderBy: { id: "asc" } }); 
