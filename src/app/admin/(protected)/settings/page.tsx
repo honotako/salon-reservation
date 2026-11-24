@@ -21,24 +21,30 @@ export default async function SettingsPage() {
     <>
       <h1>設定</h1>
 
-      <h2>営業時間と予約の刻み</h2>
-      <BusinessHoursForm
-        initialOpenTime={setting ? toTimeString(setting.openTime) : "10:00"}
-        initialCloseTime={setting ? toTimeString(setting.closeTime) : "18:00"}
-        initialSlotMinutes={setting?.slotMinutes ?? 30}
-      />
+      <section className="card mb-6">
+        <h2 className="section-title">営業時間と予約の刻み</h2>
+        <BusinessHoursForm
+          initialOpenTime={setting ? toTimeString(setting.openTime) : "10:00"}
+          initialCloseTime={setting ? toTimeString(setting.closeTime) : "18:00"}
+          initialSlotMinutes={setting?.slotMinutes ?? 30}
+        />
+      </section>
 
-      {/* パートB：毎週の定休日 */}
-      <WeeklyHolidayForm initialWeekday={WeeklyHoliday?.weekday ?? null } />
-      {/* パートC：臨時休業 */}
-      <h2>臨時休業</h2>
-      <TemporaryHolidaySection
-        holidays={temporaryHolidays.map((h) => ({
-          id: h.id,
-          dateLabel: formatDate(h.date!),
-          reason: h.reason ?? "",
-        }))}
-      />
+      <section className="card mb-6">
+        <h2 className="section-title">毎週の定休日</h2>
+        <WeeklyHolidayForm initialWeekday={WeeklyHoliday?.weekday ?? null} />
+      </section>
+
+      <section className="card mb-6">
+        <h2 className="section-title">臨時休業</h2>
+        <TemporaryHolidaySection
+          holidays={temporaryHolidays.map((h) => ({
+            id: h.id,
+            dateLabel: formatDate(h.date!),
+            reason: h.reason ?? "",
+          }))}
+        />
+      </section>
     </>
   );
 }

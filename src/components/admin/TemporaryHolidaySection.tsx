@@ -72,33 +72,35 @@ export default function TemporaryHolidaySection({ holidays }: { holidays: Holida
 
   return (
     <>
-      {/* 追加のフォーム */}
-      <form onSubmit={handleAdd}>
-        <label>
+      <form onSubmit={handleAdd} className="flex flex-wrap items-end gap-4">
+        <label className="form-field">
           日付
           <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
         </label>
-        <label>
+        <label className="form-field flex-1">
           理由
           <input type="text" placeholder="年末年始など" value={reason} onChange={(e) => setReason(e.target.value)} />
         </label>
-        <button type="submit" disabled={isSaving}>追加</button>
+        <button type="submit" disabled={isSaving} className="btn-primary">追加</button>
       </form>
 
-      {/* メッセージ（エラー、警告、成功）をここに書く */}
-      {errorMessage && <p>{errorMessage}</p>}
-      {warningMessage && <p>{warningMessage}</p>}
-      {successMessage && <p>{successMessage}</p>}
+      <div className="mt-4 flex flex-col gap-2">
+        {errorMessage && <p className="message-error">{errorMessage}</p>}
+        {warningMessage && <p className="message-warning">{warningMessage}</p>}
+        {successMessage && <p className="message-success">{successMessage}</p>}
+      </div>
 
-      {/* 一覧 */}
       {holidays.length === 0 ? (
-        <p>臨時休業はありません</p>
+        <p className="mt-4 text-sm text-stone-500">臨時休業はありません</p>
       ) : (
-        <ul>
+        <ul className="mt-4 divide-y divide-stone-100 text-sm">
           {holidays.map((h) => (
-            <li key={h.id}>
-              {h.dateLabel} {h.reason || "（理由なし）"}
-              <button type="button" onClick={() => handleDelete(h.id)} disabled={isSaving}>
+            <li key={h.id} className="flex items-center justify-between py-3">
+              <span>
+                {h.dateLabel}
+                <span className="ml-3 text-stone-500">{h.reason || "（理由なし）"}</span>
+              </span>
+              <button type="button" onClick={() => handleDelete(h.id)} disabled={isSaving} className="btn-danger">
                 削除
               </button>
             </li>

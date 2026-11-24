@@ -35,23 +35,50 @@ export default async function ReservationDetailPage({
   return (
     <>
       <h1>予約詳細</h1>
-      <h2>予約情報</h2>
-      <p>日付：{formatDate(reservation.startAt)}</p>
-      <p>時間：{formatTime(reservation.startAt)}〜{formatTime(reservation.endAt)}</p>
-      <p>メニュー：{reservation.menu.name}</p>
-      <p>料金：{reservation.menu.price.toLocaleString()}円</p>
-      <p>所要時間；{reservation.menu.durationMinutes}分</p>
-      <p>担当者：{reservation.stylist.name}</p>
-      <p>予約経路：{sourceLabel[reservation.source]}</p>
-      <p>状態：{statusLabel[reservation.status]}</p>
-      <StatusButtons reservationId={reservation.id} status={reservation.status} />
-      <DeleteButton reservationId={reservation.id} status={reservation.status} />
-      <p>コメント：{reservation.note ?? "なし"}</p>
-      <h2>お客様情報</h2>
-      <p>氏名：{reservation.customer.name}</p>
-      <p>電話番号：{reservation.customer.phone ?? "なし"}</p>
-      <p>メールアドレス：{reservation.customer.email ?? "なし" }</p>
-      <Link href="/admin/reservations">予約一覧に戻る</Link>
+
+      <div className="card mb-6">
+        <h2 className="section-title">予約情報</h2>
+        <dl className="grid grid-cols-[8rem_1fr] gap-y-2 text-sm">
+          <dt className="text-stone-500">日付</dt>
+          <dd>{formatDate(reservation.startAt)}</dd>
+          <dt className="text-stone-500">時間</dt>
+          <dd>{formatTime(reservation.startAt)}〜{formatTime(reservation.endAt)}</dd>
+          <dt className="text-stone-500">メニュー</dt>
+          <dd>{reservation.menu.name}</dd>
+          <dt className="text-stone-500">料金</dt>
+          <dd>{reservation.menu.price.toLocaleString()}円</dd>
+          <dt className="text-stone-500">所要時間</dt>
+          <dd>{reservation.menu.durationMinutes}分</dd>
+          <dt className="text-stone-500">担当者</dt>
+          <dd>{reservation.stylist.name}</dd>
+          <dt className="text-stone-500">予約経路</dt>
+          <dd>{sourceLabel[reservation.source]}</dd>
+          <dt className="text-stone-500">状態</dt>
+          <dd>{statusLabel[reservation.status]}</dd>
+          <dt className="text-stone-500">要望</dt>
+          <dd className="whitespace-pre-wrap">{reservation.note ?? "なし"}</dd>
+        </dl>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <StatusButtons reservationId={reservation.id} status={reservation.status} />
+          <DeleteButton reservationId={reservation.id} status={reservation.status} />
+        </div>
+      </div>
+
+      <div className="card mb-6">
+        <h2 className="section-title">お客様情報</h2>
+        <dl className="grid grid-cols-[8rem_1fr] gap-y-2 text-sm">
+          <dt className="text-stone-500">氏名</dt>
+          <dd>{reservation.customer.name}</dd>
+          <dt className="text-stone-500">電話番号</dt>
+          <dd>{reservation.customer.phone ?? "なし"}</dd>
+          <dt className="text-stone-500">メールアドレス</dt>
+          <dd>{reservation.customer.email ?? "なし"}</dd>
+        </dl>
+      </div>
+
+      <Link href="/admin/reservations" className="text-sm text-amber-800 hover:underline">
+        ← 予約一覧に戻る
+      </Link>
     </>
   );
 }

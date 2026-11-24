@@ -33,32 +33,39 @@ export default async function AdminHomePage() {
     return (
         <>
             <h1>本日の予約</h1>
-            <p>予約件数:{count}件</p>
+            <div className="card mb-6">
+                <p>予約件数:{count}件</p>
+            </div>
             {reservations.length === 0 ? (
                 <p>本日の予約はありません</p>
             ) : (
-                <table>
+                <div className="card">
+                <table className="w-full text-sm">
                     <thead>
-                        <tr>
-                            <th>時間</th>
-                            <th>お客さん</th>
-                            <th>美容師</th>
-                            <th>メニュー</th>
-                            <th>状態</th>
+                        <tr className="border-b border-stone-200 text-left text-stone-500">
+                            <th className="py-2">時間</th>
+                            <th className="py-2">お客さん</th>
+                            <th className="py-2">美容師</th>
+                            <th className="py-2">メニュー</th>
+                            <th className="py-2">状態</th>
                         </tr>
                     </thead>
                     <tbody>
                         {reservations.map((r) => (
-                            <tr key={r.id} className={r.status === "canceled" || r.status === "no_show" ? "text-gray-400" : ""}>
-                                <td>{formatTime(r.startAt)}〜{formatTime(r.endAt)}</td>
-                                <td>{r.customer.name}</td>
-                                <td>{r.stylist.name}</td>
-                                <td>{r.menu.name}</td>
-                                <td>{statusLabel[r.status]}</td>
+                            <tr 
+                                key={r.id} 
+                                className={`border-b border-stone-100 ${r.status === "canceled" || r.status === "no_show" ? "text-gray-400" : ""}`}
+                            >
+                                <td className="py-2">{formatTime(r.startAt)}〜{formatTime(r.endAt)}</td>
+                                <td className="py-2">{r.customer.name}</td>
+                                <td className="py-2">{r.stylist.name}</td>
+                                <td className="py-2">{r.menu.name}</td>
+                                <td className="py-2">{statusLabel[r.status]}</td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
+                </div>
             )}
         </>
     );

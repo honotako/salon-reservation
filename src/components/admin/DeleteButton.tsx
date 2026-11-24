@@ -46,11 +46,11 @@ export default function DeleteButton({
     };
 
     return (
-        <div>
-          <button type="button" onClick={handleDelete} disabled={isDeleting}>
+        <div className="flex flex-col gap-2">
+          <button type="button" onClick={handleDelete} disabled={isDeleting} className="btn-danger">
             削除する
           </button>
-          {errorMessage && <p>{errorMessage}</p>}
+          {errorMessage && <p className="message-error">{errorMessage}</p>}
         </div>
     );
 }   
