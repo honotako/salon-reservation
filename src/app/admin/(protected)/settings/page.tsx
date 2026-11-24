@@ -1,5 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import BusinessHoursForm from "@/components/admin/BusinessHoursForm";
+import WeeklyHolidayForm from "@/components/admin/WeeklyHolidayForm";
+import TemporaryHolidaySection from "@/components/admin/TemporaryHolidaySection";
+import { formatDate } from "@/lib/format";
 
 export const instant = false;
 
@@ -8,6 +11,11 @@ const toTimeString = (date: Date) => date.toISOString().slice(11, 16);
 
 export default async function SettingsPage() {
   const setting = await prisma.storeSetting.findFirst();
+  const WeeklyHoliday = await prisma.holiday.findFirst({ where : { type : "weekly"}});
+  const temporaryHolidays = await prisma.holiday.findMany({
+    where: { type: "temporary" },
+    orderBy: { date: "asc" },
+  });
 
   return (
     <>
@@ -21,7 +29,16 @@ export default async function SettingsPage() {
       />
 
       {/* パートB：毎週の定休日 */}
+      <WeeklyHolidayForm initialWeekday={WeeklyHoliday?.weekday ?? null } />
       {/* パートC：臨時休業 */}
+      <h2>臨時休業</h2>
+      <TemporaryHolidaySection
+        holidays={temporaryHolidays.map((h) => ({
+          id: h.id,
+          dateLabel: formatDate(h.date!),
+          reason: h.reason ?? "",
+        }))}
+      />
     </>
   );
 }
