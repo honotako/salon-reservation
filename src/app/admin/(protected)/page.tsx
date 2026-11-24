@@ -1,23 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { connection } from "next/server";
+import { statusLabel, formatTime } from "@/lib/format";
 
 export const instant = false;
-
-// 状態を日本語にする
-const statusLabel = {
-    reserved: "予約済み",
-    visited: "来店済み",
-    canceled: "キャンセル",
-    no_show: "無断キャンセル",
-};
-  
-// 日時から「10:00」のような時刻だけを取り出す
-const formatTime = (date: Date) =>
-    date.toLocaleTimeString("ja-JP", {
-     hour: "2-digit",
-     minute: "2-digit",
-     timeZone: "Asia/Tokyo",
-    });
 
 export default async function AdminHomePage() {
     // アクセスのたびに作る画面だと Next.js に伝える
@@ -32,6 +17,7 @@ export default async function AdminHomePage() {
     const reservations = await prisma.reservation.findMany({
         where : {
             startAt : { gte : startOfToday, lt : startOfTomorrow },
+            isDeleted : false,
         },
         include : {
             customer : true,
