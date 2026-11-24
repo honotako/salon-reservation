@@ -1,3 +1,72 @@
-export default function AdminHomePage() {
-    return <h1>Home 画面</h1>;
+import { prisma } from "@/lib/prisma";
+import { connection } from "next/server";
+import { statusLabel, formatTime } from "@/lib/format";
+
+export const instant = false;
+
+export default async function AdminHomePage() {
+    // アクセスのたびに作る画面だと Next.js に伝える
+    await connection();
+    // 今日の 0:00 と、明日の 0:00
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+    const startOfTomorrow = new Date(startOfToday);
+    startOfTomorrow.setDate(startOfTomorrow.getDate() + 1);
+
+    //DBから今日の予約取得する
+    const reservations = await prisma.reservation.findMany({
+        where : {
+            startAt : { gte : startOfToday, lt : startOfTomorrow },
+            isDeleted : false,
+        },
+        include : {
+            customer : true,
+            stylist : true,
+            menu : true,
+        },
+        orderBy : [{ stylistId: "asc"}, { startAt: "asc"}],
+    });
+
+    //今日の予約件数を取得
+    const count = reservations.filter((r) => r.status === "reserved" || r.status === "visited" ).length;
+
+    return (
+        <>
+            <h1>本日の予約</h1>
+            <div className="card mb-6">
+                <p>予約件数:{count}件</p>
+            </div>
+            {reservations.length === 0 ? (
+                <p>本日の予約はありません</p>
+            ) : (
+                <div className="card">
+                <table className="w-full text-sm">
+                    <thead>
+                        <tr className="border-b border-stone-200 text-left text-stone-500">
+                            <th className="py-2">時間</th>
+                            <th className="py-2">お客さん</th>
+                            <th className="py-2">美容師</th>
+                            <th className="py-2">メニュー</th>
+                            <th className="py-2">状態</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {reservations.map((r) => (
+                            <tr 
+                                key={r.id} 
+                                className={`border-b border-stone-100 ${r.status === "canceled" || r.status === "no_show" ? "text-gray-400" : ""}`}
+                            >
+                                <td className="py-2">{formatTime(r.startAt)}〜{formatTime(r.endAt)}</td>
+                                <td className="py-2">{r.customer.name}</td>
+                                <td className="py-2">{r.stylist.name}</td>
+                                <td className="py-2">{r.menu.name}</td>
+                                <td className="py-2">{statusLabel[r.status]}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                </div>
+            )}
+        </>
+    );
 }

@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fafaf9;
+  --foreground: #292524;
 }
 
 @theme inline {
@@ -12,15 +12,60 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Hiragino Sans", "Noto Sans JP", "Yu Gothic", sans-serif;
+}
+
+/* 全体の見出しと入力欄（タグに直接効く） */
+@layer base {
+  h1 {
+    @apply mb-6 text-2xl font-bold text-stone-800;
+  }
+
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    @apply rounded-md border border-stone-300 bg-white px-3 py-2 text-sm text-stone-800
+      focus:border-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-200;
+  }
+}
+
+/* 名前を付けた共通の見た目（className で使う） */
+@layer components {
+  .card {
+    @apply rounded-lg border border-stone-200 bg-white p-6 shadow-sm;
+  }
+
+  .section-title {
+    @apply mb-4 text-lg font-semibold text-stone-800;
+  }
+
+  .form-field {
+    @apply flex flex-col gap-1 text-sm text-stone-700;
+  }
+
+  .btn-primary {
+    @apply rounded-md bg-amber-800 px-4 py-2 text-sm font-medium text-white
+      hover:bg-amber-900 disabled:opacity-50;
+  }
+  .btn-secondary {
+    @apply rounded-md border border-stone-300 bg-white px-4 py-2 text-sm text-stone-700
+      hover:bg-stone-100 disabled:opacity-50;
+  }
+  .btn-danger {
+    @apply rounded-md border border-red-300 bg-white px-4 py-2 text-sm text-red-700
+      hover:bg-red-50 disabled:opacity-50;
+  }
+
+  .message-error {
+    @apply rounded-md bg-red-50 px-3 py-2 text-sm text-red-700;
+  }
+  .message-warning {
+    @apply rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-800;
+  }
+  .message-success {
+    @apply rounded-md bg-green-50 px-3 py-2 text-sm text-green-700;
+  }
 }
