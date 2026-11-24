@@ -81,13 +81,13 @@ async function main() {
     };
 
     const reservations = [
-        { customer: { name: "山田花子", email: "yamada@example.com" }, stylist: "田中敦子", menu: "カット", start: "10:00", status: "visited", source: "web" },
-        { customer: { name: "佐々木美咲", phone: "090-1111-2222" }, stylist: "田中敦子", menu: "カット＋カラー", start: "13:00", status: "reserved", source: "line" },
+        { customer: { name: "山田花子", email: "yamada@example.com" }, stylist: "田中敦子", menu: "カット", start: "10:00", status: "visited", source: "web", note: "髪をすいて欲しいです"  },
+        { customer: { name: "佐々木美咲", phone: "090-1111-2222" }, stylist: "田中敦子", menu: "カット＋カラー", start: "13:00", status: "reserved", source: "line", note: "前回より明るめのカラーにしたい" },
         { customer: { name: "小林愛", phone: "090-3333-4444" }, stylist: "田中敦子", menu: "眉カット", start: "15:30", status: "canceled", source: "phone" },
         { customer: { name: "鈴木健太", phone: "080-5555-6666" }, stylist: "佐藤みか", menu: "パーマ", start: "11:00", status: "reserved", source: "phone" },
         { customer: { name: "高橋翔", phone: "070-7777-8888" }, stylist: "佐藤みか", menu: "カット", start: "14:00", status: "no_show", source: "instagram" },
-        { customer: { name: "伊藤由美", email: "ito@example.com" }, stylist: "安田雄太", menu: "ストレート矯正", start: "10:30", status: "visited", source: "web" },
-        { customer: { name: "渡辺さくら", email: "watanabe@example.com" }, stylist: "安田雄太", menu: "カラー", start: "16:00", status: "reserved", source: "web" },
+        { customer: { name: "伊藤由美", email: "ito@example.com" }, stylist: "安田雄太", menu: "ストレート矯正", start: "10:30", status: "visited", source: "web", note: "今回初めてなので色々教えてください"  },
+        { customer: { name: "渡辺さくら", email: "watanabe@example.com" }, stylist: "安田雄太", menu: "カラー", start: "16:00", status: "reserved", source: "web", note: "ブリーチの部分があるので相談させてください"  },
     ] as const;
 
     for (const r of reservations) {
@@ -106,6 +106,7 @@ async function main() {
             endAt,
             status: r.status,
             source: r.source,
+            note: "note" in r ? r.note : null,
         },
         });
     }
