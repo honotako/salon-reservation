@@ -64,6 +64,52 @@ async function main() {
         ],
     });
 
+    // 今日の予約（seed を実行した日を「今日」とする）
+    const menuByName = Object.fromEntries(
+        (await prisma.menu.findMany()).map((m) => [m.name, m])
+    );
+    const stylistByName = Object.fromEntries(
+        (await prisma.stylist.findMany()).map((s) => [s.name, s])
+    );
+
+    // "10:00" のような時刻から、今日のその時刻の日時を作る
+    const todayAt = (time: string) => {
+        const [hour, minute] = time.split(":").map(Number);
+        const date = new Date();
+        date.setHours(hour, minute, 0, 0);
+        return date;
+    };
+
+    const reservations = [
+        { customer: { name: "山田花子", email: "yamada@example.com" }, stylist: "田中敦子", menu: "カット", start: "10:00", status: "visited", source: "web" },
+        { customer: { name: "佐々木美咲", phone: "090-1111-2222" }, stylist: "田中敦子", menu: "カット＋カラー", start: "13:00", status: "reserved", source: "line" },
+        { customer: { name: "小林愛", phone: "090-3333-4444" }, stylist: "田中敦子", menu: "眉カット", start: "15:30", status: "canceled", source: "phone" },
+        { customer: { name: "鈴木健太", phone: "080-5555-6666" }, stylist: "佐藤みか", menu: "パーマ", start: "11:00", status: "reserved", source: "phone" },
+        { customer: { name: "高橋翔", phone: "070-7777-8888" }, stylist: "佐藤みか", menu: "カット", start: "14:00", status: "no_show", source: "instagram" },
+        { customer: { name: "伊藤由美", email: "ito@example.com" }, stylist: "安田雄太", menu: "ストレート矯正", start: "10:30", status: "visited", source: "web" },
+        { customer: { name: "渡辺さくら", email: "watanabe@example.com" }, stylist: "安田雄太", menu: "カラー", start: "16:00", status: "reserved", source: "web" },
+    ] as const;
+
+    for (const r of reservations) {
+        const customer = await prisma.customer.create({ data: r.customer });
+        const menu = menuByName[r.menu];
+        const startAt = todayAt(r.start);
+        // 終了時間 = 開始時間 + メニューの所要時間
+        const endAt = new Date(startAt.getTime() + menu.durationMinutes * 60 * 1000);
+
+        await prisma.reservation.create({
+        data: {
+            customerId: customer.id,
+            stylistId: stylistByName[r.stylist].id,
+            menuId: menu.id,
+            startAt,
+            endAt,
+            status: r.status,
+            source: r.source,
+        },
+        });
+    }
+
     console.log("テストデータを入れました");
 }
 
