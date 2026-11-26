@@ -7,16 +7,18 @@ export const instant = false;
 export default async function AdminHomePage() {
     // アクセスのたびに作る画面だと Next.js に伝える
     await connection();
-    // 今日の 0:00 と、明日の 0:00
-    const startOfToday = new Date();
-    startOfToday.setHours(0, 0, 0, 0);
-    const startOfTomorrow = new Date(startOfToday);
-    startOfTomorrow.setDate(startOfTomorrow.getDate() + 1);
+    // 日本時間の今日の日付（例：2026-11-25）。サーバーが UTC でもずれないようにする
+    const today = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Tokyo",
+    }).format(new Date());
+    // 日本時間の今日の 0:00:00 〜 23:59:59
+    const startAt = new Date(`${today}T00:00:00+09:00`);
+    const endAt = new Date(`${today}T23:59:59+09:00`);
 
     //DBから今日の予約取得する
     const reservations = await prisma.reservation.findMany({
         where : {
-            startAt : { gte : startOfToday, lt : startOfTomorrow },
+            startAt : { gte : startAt, lte : endAt },
             isDeleted : false,
         },
         include : {
