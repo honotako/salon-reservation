@@ -86,6 +86,19 @@ export default function ReservationForm({
       setErrorMessage(error);
       return;
     }
+    setCustomerMode("existing");
+    setCustomerId(null);
+    setNewName("");
+    setNewPhone("");
+    setNewEmail("");
+    setStylistId(null);
+    setMenuId(null);
+    setDate("");
+    setStartTime("");
+    setSource("phone");
+    setNote("");
+    setAvailableTimes([]);
+
     router.push("/admin/reservations");
   };
 
